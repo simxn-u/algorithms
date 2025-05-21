@@ -5,11 +5,12 @@
 #define MAXLEN 512
 
 typedef struct {
-  char dir;
+  char *dir;
   char symbol;
 } Commands;
 
-Commands commands[] = {{'u', '^'}, {'d', 'v'}, {'l', '<'}, {'r', '>'}};
+Commands commands[] = {
+    {"up", '^'}, {"down", 'v'}, {"left", '<'}, {"right", '>'}};
 
 int main() {
   char input[MAXLEN];
@@ -21,11 +22,21 @@ int main() {
   char *token = strtok(input, " ");
   while (token != NULL) {
     for (int i = 0; i < 4; i++) {
-      if (token[0] == commands[i].dir) {
+      if (strcmp(token, commands[i].dir) == 0) {
+        int count = 1;
+        char *next = strtok(NULL, " ");
+        while (next != NULL && strcmp(next, commands[i].dir) == 0) {
+          count++;
+          next = strtok(NULL, " ");
+        }
+        if (count > 1)
+          printf("%d", count);
         printf("%c", commands[i].symbol);
-        break;
+        token = next;
+        goto nextToken;
       }
     }
     token = strtok(NULL, " ");
+  nextToken:;
   }
 }
